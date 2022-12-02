@@ -1,4 +1,5 @@
 import cac from 'cac'
+import { startServer } from './server'
 
 const cli = cac()
 
@@ -7,5 +8,11 @@ cli
   .alias('serve')
   .alias('dev')
   .action(async () => {
-    console.log('start')
+    await startServer()
   })
+
+cli.command('build', 'Build the app for production').action(() => {})
+
+cli.help()
+
+cli.parse()

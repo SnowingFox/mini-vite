@@ -5,7 +5,7 @@ import type {
   PluginContext as RollupPluginContext,
   SourceDescription,
 } from 'rollup'
-import type { Plugin } from './plugin'
+import type { Plugin } from '../plugin'
 
 export interface PluginContainer {
   resolveId(id: string, importer?: string): Promise<PartialResolvedId | null>
@@ -41,7 +41,7 @@ export const createPluginContainer = (plugins: Plugin[]): PluginContainer => {
       return null
     },
     async load(id) {
-      const ctx = new Context()
+      const ctx = new Context() as any
       for (const plugin of plugins) {
         if (plugin.load) {
           const result = await plugin.load.call(ctx, id)
@@ -52,21 +52,19 @@ export const createPluginContainer = (plugins: Plugin[]): PluginContainer => {
       return null
     },
     async transform(code, id) {
-      const ctx = new Context()
+      const ctx = new Context() as any
       for (const plugin of plugins) {
         if (plugin.transform) {
           const result = await plugin.transform.call(ctx, code, id)
           if (!result)
             continue
-
-          if (result.code)
-            code = result.code
-          else if (typeof result === 'string')
+          if (typeof result === 'string')
             code = result
+          else if (result.code)
+            code = result.code
         }
-        return { code }
       }
-      return null
+      return { code }
     },
   }
 
