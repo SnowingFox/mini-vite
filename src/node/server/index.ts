@@ -4,6 +4,8 @@ import { build } from 'esbuild'
 import { optimize } from '../optimizer'
 import type { Plugin } from '../plugin'
 import { resolvePlugins } from '../plugins'
+import {slash} from "../utils";
+import {staticMiddleware} from "./middlewares/static";
 import { transformRequestMiddleware } from './middlewares/transform'
 import { createPluginContainer } from './pluginContainer'
 import type { PluginContainer } from './pluginContainer'
@@ -39,6 +41,8 @@ export async function startServer() {
   app.use(transformRequestMiddleware(serverContext))
 
   app.use(indexHtmlMiddleware(serverContext))
+
+  app.use(staticMiddleware(slash(serverContext.root)))
 
   app.listen(3000, async () => {
     await optimize(root)

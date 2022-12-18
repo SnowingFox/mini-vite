@@ -3,7 +3,7 @@ import path from 'path'
 import type { NextHandleFunction } from 'connect'
 import { pathExists, pathExistsSync } from 'fs-extra'
 import type { ServerContext } from '..'
-import { cleanUrl, isJSRequest } from '../../utils'
+import { cleanUrl, isCSSRequest, isImportRequest, isJSRequest } from '../../utils'
 
 export async function transformRequest(
   url: string,
@@ -13,6 +13,7 @@ export async function transformRequest(
   url = cleanUrl(url)
 
   const resolvedResult = await pluginContainer.resolveId(url)
+
   let transformResult
 
   if (resolvedResult?.id) {
@@ -36,7 +37,7 @@ export function transformRequestMiddleware(
 
     const url = req.url as string
 
-    if (isJSRequest(url)) {
+    if (isJSRequest(url) || isCSSRequest(url) || isImportRequest(url)) {
       let result = await transformRequest(url, serverContext) as any
       if (!result)
         return next()
@@ -46,6 +47,7 @@ export function transformRequestMiddleware(
 
       res.statusCode = 200
       res.setHeader('Content-Type', 'application/javascript')
+
       return res.end(result)
     }
 

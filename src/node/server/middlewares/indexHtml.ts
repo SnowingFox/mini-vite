@@ -21,8 +21,6 @@ export function indexHtmlMiddleware(
 
         res.statusCode = 200
         res.setHeader('Content-Type', 'text/html')
-
-        return res.end(html)
       }
     }
 

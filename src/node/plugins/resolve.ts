@@ -20,8 +20,6 @@ export function resolvePlugin(): Plugin {
       if (isInternalRequest(id))
         return null
 
-      console.log(id)
-
       if (path.isAbsolute(id)) {
         if (await pathExists(id))
           return { id }
